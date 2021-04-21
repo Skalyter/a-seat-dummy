@@ -52,6 +52,7 @@ public class NotificationService extends Service {
     private final IBinder binder = new NotificationBinder();
 
     private void showNotification() {
+        //todo fix show notification when app is force closed
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
