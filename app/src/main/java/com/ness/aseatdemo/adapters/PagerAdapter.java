@@ -1,7 +1,10 @@
 package com.ness.aseatdemo.adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ness.aseatdemo.R;
+import com.ness.aseatdemo.notifications.NotificationService;
 
 import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
 
 public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> {
@@ -59,7 +64,8 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         });
 
         holder.saveSeat.setOnClickListener(v -> {
-            createNotification(String.format("You have a booked seat at office today @ %s. Don't be late!", holder.startTime.toString()));
+            createNotification(String.format("You booked a seat at office @ %s. Don't be late!",
+                    holder.startTime.getText().toString()));
         });
     }
 
@@ -69,8 +75,21 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
     }
 
     private void createNotification(String message) {
-        //todo handle notification
 
+        Calendar calendar = Calendar.getInstance();
+
+        //todo implement the logic to set the reminder when needed (30min before/in the morning/6 hours before/12hours before/a day before?)
+        calendar.add(Calendar.SECOND, 5);
+
+        Intent serviceIntent = new Intent(context, NotificationService.class);
+        serviceIntent.putExtra("message", message);
+
+        PendingIntent servicePendingIntent = PendingIntent.getService(context,
+                1, serviceIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), servicePendingIntent);
     }
 
     public static class PageHolder extends RecyclerView.ViewHolder {
