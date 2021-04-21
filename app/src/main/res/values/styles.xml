@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="App.BlueBorderedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/blue_ness</item>
+        <item name="android:paddingVertical">16dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="strokeWidth">1.5dp</item>
+    </style>
+
+    <style name="App.BasicButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:paddingVertical">16dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="App.MaterialBody2" parent="TextAppearance.MaterialComponents.Body2">
+
+    </style>
+
+    <style name="App.MaterialBody1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+</resources>
