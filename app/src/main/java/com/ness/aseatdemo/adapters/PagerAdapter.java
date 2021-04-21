@@ -1,35 +1,21 @@
 package com.ness.aseatdemo.adapters;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ness.aseatdemo.MainActivity;
 import com.ness.aseatdemo.R;
-import com.ness.aseatdemo.notifications.NotifyService;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.ness.aseatdemo.notifications.NotifyService.NOTIFICATION_CHANNEL_ID;
 
 public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> {
 
@@ -60,7 +46,7 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         });
 
         holder.endTime.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus){
+            if (hasFocus) {
                 TimePickerDialog dialog = new TimePickerDialog(context, (view, hourOfDay, minute) -> {
                     holder.endTime.setText(String.format("%d:%d", hourOfDay, minute));
                 }, LocalTime.now().getHour(), LocalTime.now().getMinute(), true);
@@ -82,7 +68,7 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         return pages.size();
     }
 
-    private void createNotification(String message){
+    private void createNotification(String message) {
         //todo handle notification
 
     }

@@ -4,9 +4,8 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
-import static com.ness.aseatdemo.notifications.NotifyService.NOTIFICATION_CHANNEL_ID;
-
 public class App extends Application {
+    public static final String NOTIFICATION_CHANNEL_ID = "reminders_channel";
 
     @Override
     public void onCreate() {
