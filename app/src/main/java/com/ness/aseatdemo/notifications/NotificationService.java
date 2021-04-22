@@ -18,7 +18,7 @@ import com.ness.aseatdemo.R;
 
 public class NotificationService extends Service {
 
-    private static final String TAG = "NotificationService";
+    public static final String TAG = "NotificationService";
     private String message;
     private NotificationManager notificationManager;
 
@@ -52,7 +52,7 @@ public class NotificationService extends Service {
     private final IBinder binder = new NotificationBinder();
 
     private void showNotification() {
-        //todo fix show notification when app is force closed
+        //todo fix show notification when app is force closed (kinda fixed?)
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 

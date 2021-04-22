@@ -14,7 +14,7 @@ import com.ness.aseatdemo.adapters.PagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
+public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setTitle(Html.fromHtml("<font color='#000000'>Demo App</font>"));
+        actionBar.setTitle(Html.fromHtml("<font color='#000000'>Demo App</font>", 0));
 
         List<String> words = new ArrayList<>();
         words.add("Today");
@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         pager2.setAdapter(adapter);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.addOnTabSelectedListener(this);
 
         TabLayoutMediator mediator = new TabLayoutMediator(tabLayout, pager2,false, true, (tab, position) -> {
             tab.setText(words.get(position));
@@ -44,18 +43,4 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
     }
 
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
 }
