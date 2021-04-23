@@ -1,6 +1,5 @@
 package com.ness.aseatdemo.adapters;
 
-import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ness.aseatdemo.R;
-import com.ness.aseatdemo.notifications.AlarmTrigger;
-import com.ness.aseatdemo.notifications.NotificationService;
+import com.ness.aseatdemo.notifications.BackgroundService;
 
 import java.time.LocalTime;
 import java.util.Calendar;
@@ -27,6 +25,8 @@ import java.util.List;
 import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MESSAGE;
 import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MILLIS;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
+import static com.ness.aseatdemo.notifications.NotificationService.TAG_MESSAGE;
+import static com.ness.aseatdemo.notifications.NotificationService.TAG_MILLIS;
 
 public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> {
 
@@ -69,19 +69,20 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         });
 
         holder.saveSeat.setOnClickListener(v -> {
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MINUTE, 1);
+            cal.add(Calendar.SECOND, 30);
+
+            long millis = cal.getTimeInMillis();
+
             String message = String.format("You booked a seat at office @ %s. Don't be late!",
                     holder.startTime.getText().toString());
-            //todo replace this calendar with relevant values
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, 7);
 
-            Intent serviceIntent = new Intent(context, NotificationService.class);
-            serviceIntent.putExtra(KEY_MESSAGE, message);
-            serviceIntent.putExtra(KEY_MILLIS, calendar.getTimeInMillis());
+            createNotification(message, millis);
 
-            context.startService(serviceIntent);
+            addNotificationTimeToSharedPref(message, millis);
 
-//            AlarmTrigger.createNotification(context, message, calendar.getTimeInMillis());
 
             Toast.makeText(context, "Seat booked", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: notification triggered");
@@ -91,6 +92,26 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
     @Override
     public int getItemCount() {
         return pages.size();
+    }
+
+    private void createNotification(String message, long millis) {
+
+        Intent intent = new Intent(context, BackgroundService.class);
+
+        intent.putExtra(TAG_MESSAGE, message);
+        intent.putExtra(TAG_MILLIS, millis);
+
+        context.startService(intent);
+    }
+
+    private void addNotificationTimeToSharedPref(String message, long millis) {
+        SharedPreferences sharedPreferences
+                = context.getApplicationContext().getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(TAG_MILLIS, millis);
+        editor.putString(TAG_MESSAGE, message);
+        editor.apply();
+        Log.d(TAG, "addNotificationTimeToSharedPref:" + message);
     }
 
     public static class PageHolder extends RecyclerView.ViewHolder {

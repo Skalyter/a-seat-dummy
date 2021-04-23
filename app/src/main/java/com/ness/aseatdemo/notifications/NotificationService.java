@@ -22,31 +22,46 @@ import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MILLIS;
 public class NotificationService extends Service {
 
     public static final String TAG = "NotificationService";
-//    private NotificationManager notificationManager;
+
+
+    public static final String TAG_MILLIS = "millis";
+    public static final String TAG_MESSAGE = "message";
+
+    private String message;
+    private NotificationManager notificationManager;
 
     @Override
     public void onCreate() {
-//        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        String message = intent.getStringExtra(KEY_MESSAGE);
-        long millis = intent.getLongExtra(KEY_MILLIS, -1);
+        message = intent.getStringExtra(TAG_MESSAGE);
+
         Log.i(TAG, "Received start id  " + startId + ": " + intent);
 
-//        AlarmTrigger.createNotification(this, message, millis);
-        showNotification(this, message);
+        showNotification();
 
         return START_NOT_STICKY;
     }
 
-    private void showNotification(Context context, String message) {
+//        AlarmTrigger.createNotification(this, message, millis);
+        showNotification(this, message);
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void showNotification() {
+
         //todo fix show notification when app is force closed (kinda fixed?)
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(context, App.NOTIFICATION_CHANNEL_ID)
