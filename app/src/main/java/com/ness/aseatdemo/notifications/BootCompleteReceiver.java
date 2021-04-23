@@ -1,13 +1,13 @@
 package com.ness.aseatdemo.notifications;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MESSAGE;
+import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MILLIS;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
@@ -18,23 +18,17 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
         SharedPreferences preferences
                 = context.getApplicationContext().getSharedPreferences("notifications", Context.MODE_PRIVATE);
-        long timeStamp = preferences.getLong("notification", -1);
-        String message = preferences.getString("message", "null");
 
-        if (timeStamp >= System.currentTimeMillis()) {
+        long millis = preferences.getLong(KEY_MILLIS, -1);
+        String message = preferences.getString(KEY_MESSAGE, "null");
 
-            Intent serviceIntent = new Intent(context, NotificationService.class);
-            intent.putExtra("message", message);
+        Intent intentService = new Intent(context, NotificationService.class);
+        intentService.putExtra(KEY_MESSAGE, message);
+        intentService.putExtra(KEY_MILLIS, millis);
 
-            PendingIntent servicePendingIntent = PendingIntent.getService(context,
-                    1, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-            manager.set(AlarmManager.RTC_WAKEUP, timeStamp, servicePendingIntent);
-            Log.d(TAG, "notification alarm set " + message);
-
-        }
+        context.startService(intentService);
+//        AlarmTrigger.createNotificationFromBroadcast(context, message, millis);
+//        if (millis >= System.currentTimeMillis()) { }
 
     }
 }
