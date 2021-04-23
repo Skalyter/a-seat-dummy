@@ -1,7 +1,5 @@
 package com.ness.aseatdemo.notifications;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +9,8 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
+import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MESSAGE;
+import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MILLIS;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG_MESSAGE;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG_MILLIS;
