@@ -1,7 +1,5 @@
 package com.ness.aseatdemo.adapters;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,13 +17,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ness.aseatdemo.R;
-import com.ness.aseatdemo.notifications.NotificationService;
+import com.ness.aseatdemo.notifications.BackgroundService;
 
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
 
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
+import static com.ness.aseatdemo.notifications.NotificationService.TAG_MESSAGE;
+import static com.ness.aseatdemo.notifications.NotificationService.TAG_MILLIS;
 
 public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> {
 
@@ -68,8 +68,20 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         });
 
         holder.saveSeat.setOnClickListener(v -> {
-            createNotification(String.format("You booked a seat at office @ %s. Don't be late!",
-                    holder.startTime.getText().toString()));
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MINUTE, 1);
+            cal.add(Calendar.SECOND, 30);
+
+            long millis = cal.getTimeInMillis();
+
+            String message = String.format("You booked a seat at office @ %s. Don't be late!",
+                    holder.startTime.getText().toString());
+
+            createNotification(message, millis);
+
+            addNotificationTimeToSharedPref(message, millis);
+
             Toast.makeText(context, "Seat booked", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: notification triggered");
         });
@@ -80,32 +92,22 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         return pages.size();
     }
 
-    private void createNotification(String message) {
+    private void createNotification(String message, long millis) {
 
-        Calendar calendar = Calendar.getInstance();
+        Intent intent = new Intent(context, BackgroundService.class);
 
-        //todo implement the logic to set the reminder when needed (30min before/in the morning/6 hours before/12hours before/a day before?)
-        calendar.add(Calendar.MINUTE, 3);
+        intent.putExtra(TAG_MESSAGE, message);
+        intent.putExtra(TAG_MILLIS, millis);
 
-        Intent serviceIntent = new Intent(context, NotificationService.class);
-        serviceIntent.putExtra("message", message);
-
-        PendingIntent servicePendingIntent = PendingIntent.getService(context,
-                1, serviceIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), servicePendingIntent);
-
-        addNotificationTimeToSharedPref(calendar.getTimeInMillis(), message);
+        context.startService(intent);
     }
 
-    private void addNotificationTimeToSharedPref(long timestamp, String message){
+    private void addNotificationTimeToSharedPref(String message, long millis) {
         SharedPreferences sharedPreferences
                 = context.getApplicationContext().getSharedPreferences("notifications", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("notification", timestamp);
-        editor.putString("message", message);
+        editor.putLong(TAG_MILLIS, millis);
+        editor.putString(TAG_MESSAGE, message);
         editor.apply();
         Log.d(TAG, "addNotificationTimeToSharedPref:" + message);
     }

@@ -19,26 +19,27 @@ import com.ness.aseatdemo.R;
 public class NotificationService extends Service {
 
     public static final String TAG = "NotificationService";
+
+    public static final String TAG_MILLIS = "millis";
+    public static final String TAG_MESSAGE = "message";
+
     private String message;
     private NotificationManager notificationManager;
-
-    public class NotificationBinder extends Binder {
-        NotificationService getService() {
-            return NotificationService.this;
-        }
-    }
 
     @Override
     public void onCreate() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        message = intent.getStringExtra("message");
+
+        message = intent.getStringExtra(TAG_MESSAGE);
+
         Log.i(TAG, "Received start id  " + startId + ": " + intent);
+
         showNotification();
+
         return START_NOT_STICKY;
     }
 
@@ -46,15 +47,14 @@ public class NotificationService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return null;
     }
 
-    private final IBinder binder = new NotificationBinder();
-
     private void showNotification() {
+
         //todo fix show notification when app is force closed (kinda fixed?)
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new Notification.Builder(this, App.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_ness_logo)
