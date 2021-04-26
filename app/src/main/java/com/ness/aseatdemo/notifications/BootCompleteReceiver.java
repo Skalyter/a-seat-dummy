@@ -3,12 +3,9 @@ package com.ness.aseatdemo.notifications;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.util.Log;
 
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
@@ -31,36 +28,27 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (millis >= System.currentTimeMillis()) {
 
             Log.d(TAG, "onReceive bootComplete: all good");
-            Intent serviceIntent = new Intent(context, BackgroundService.class);
-            serviceIntent.putExtra(TAG_MESSAGE, message);
-            intent.putExtra(TAG_MILLIS, millis);
 
-            context.startService(serviceIntent);
-            context.bindService(serviceIntent, new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName name, IBinder service) {
-
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName name) {
-
-                }
-            }, Context.BIND_AUTO_CREATE);
-
-//              or this one which creates the alarm manager straight ahead, without any other service
-
-//            Intent serviceIntent = new Intent(context, NotificationService.class);
+            //this workaround throws an error, so we start the alarmManager straight from the broadcastReceiver
+//            Intent serviceIntent = new Intent(context, BackgroundService.class);
+//            serviceIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            serviceIntent.putExtra(TAG_MESSAGE, message);
+//            serviceIntent.putExtra(TAG_MILLIS, millis);
 //
-//            PendingIntent servicePendingIntent = PendingIntent.getService(context,
-//                    1, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//
-//            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, servicePendingIntent);
-//
-//            Log.d(TAG, "startCommand: alarm created");
+//            context.startService(serviceIntent);
+
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.putExtra(TAG_MESSAGE, message);
+            serviceIntent.putExtra(TAG_MILLIS, millis);
+
+            PendingIntent servicePendingIntent = PendingIntent.getService(context,
+                    1, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, servicePendingIntent);
+
+            Log.d(TAG, "startCommand: alarm created");
 
         } else {
             Log.d(TAG, "onReceive bootComplete: something's not good. Millis: " + millis);

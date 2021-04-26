@@ -65,6 +65,7 @@ public class NotificationService extends Service {
                 .setAutoCancel(true)
                 .setShowWhen(true)
                 .build();
+
         notificationManager.notify(1, notification);
     }
 }
