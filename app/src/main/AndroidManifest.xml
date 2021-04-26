@@ -15,8 +15,7 @@
 
         <service
             android:name=".notifications.BackgroundService"
-            android:directBootAware="true"
-            android:enabled="true" />
+            android:enabled="true"/>
 
         <service
             android:name=".notifications.NotificationService"
@@ -40,5 +39,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

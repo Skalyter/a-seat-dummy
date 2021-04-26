@@ -1,8 +1,11 @@
 package com.ness.aseatdemo.adapters;
 
 import android.app.TimePickerDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ness.aseatdemo.R;
 import com.ness.aseatdemo.notifications.BackgroundService;
+import com.ness.aseatdemo.notifications.BootCompleteReceiver;
 
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MESSAGE;
-import static com.ness.aseatdemo.notifications.AlarmTrigger.KEY_MILLIS;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG_MESSAGE;
 import static com.ness.aseatdemo.notifications.NotificationService.TAG_MILLIS;
@@ -71,8 +73,8 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
         holder.saveSeat.setOnClickListener(v -> {
 
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MINUTE, 1);
-            cal.add(Calendar.SECOND, 30);
+            cal.add(Calendar.MINUTE, 2);
+//            cal.add(Calendar.SECOND, 5);
 
             long millis = cal.getTimeInMillis();
 
@@ -82,7 +84,6 @@ public class PagerAdapter extends RecyclerView.Adapter<PagerAdapter.PageHolder> 
             createNotification(message, millis);
 
             addNotificationTimeToSharedPref(message, millis);
-
 
             Toast.makeText(context, "Seat booked", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onBindViewHolder: notification triggered");
